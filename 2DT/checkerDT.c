@@ -85,29 +85,18 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
 
    if(oNNode!= NULL) {
       Node_T *children;
-      /*
-      char *ps;
-      char c;
-      size_t count;
-      */
 
       /* Sample check on each node: node must be valid */
       /* If not, pass that failure back up immediately */
       if(!CheckerDT_Node_isValid(oNNode))
          return FALSE;
 
-      /* ps = DT_toString();
-      c = *ps;
-      count = 0;
-      while ((c = *ps)!='\0') {
-         if (c == '\\') {
-            count++;
-            ps++;
-            }
-      } 
-      if (count != DT_get */
-
       children = calloc(Node_getNumChildren(oNNode), sizeof(*children));
+      if (children == NULL) {
+         fprintf(stderr, "Memory allocation within DT validity checker"
+            "failed \n");
+         return FALSE;
+      }
 
       /* Recur on every child of oNNode */
       for(ulIndex = 0; ulIndex < Node_getNumChildren(oNNode); ulIndex++)
@@ -122,14 +111,6 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
                "getChild returns\n");
             return FALSE;
          }
-
-         /* 
-         if (strlen(DT_toString()) >= strlen(Node_toString(oNNode))) {
-            fprintf(stderr, "String representation of DT is shorter \
-               than string representation of one of its nodes\n");
-            return FALSE;
-         }
-         */
 
          /* Check if children of oNNode are stored in lexicographic
          order by comparing their string representations */
@@ -169,6 +150,25 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
    return TRUE;
 }
 
+/* Recursively sums the number of nodes for each child of the given node
+oNNode and adds 1 to the result, returning the number of nodes (size_t)
+in DT rooted at oNNode */
+static size_t CheckerDTNumNodes(Node_T oNNode) {
+   size_t ulIndex;
+   size_t numNodes = 0;
+   if (oNNode == NULL) {
+      return 0;
+   }
+   for(ulIndex = 0; ulIndex < Node_getNumChildren(oNNode); ulIndex++)
+      {
+         Node_T oNChild = NULL;
+         Node_getChild(oNNode, ulIndex, &oNChild);
+         if (oNChild != NULL)
+            numNodes += CheckerDTNumNodes(oNChild);
+      }
+   return numNodes + 1;
+} 
+
 /* see checkerDT.h for specification */
 boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
                           size_t ulCount) {
@@ -180,6 +180,11 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
          fprintf(stderr, "Not initialized, but count is not 0\n");
          return FALSE;
       }
+   /* Check whether ulCount (count of nodes) provided is correct */
+   if (CheckerDTNumNodes(oNRoot) != ulCount) {
+         fprintf(stderr, "Count is incorrect\n");
+         return FALSE;
+      } 
 
    /* Now checks invariants recursively at each node from the root. */
    return CheckerDT_treeCheck(oNRoot);
