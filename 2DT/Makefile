@@ -6,7 +6,7 @@
 #--------------------------------------------------------------------
 
 GCC = gcc217
-#GCC = gcc217m
+# GCC = gcc217m
 
 TARGETS = dtGood dtBad1a dtBad1b dtBad2 dtBad3 dtBad4
 

@@ -3,12 +3,12 @@ Assignment 4 readme File
 ------------------------------------------------------------------------
 Student 1: What is your name?
 
-
+Sunmin Eom
 
 ------------------------------------------------------------------------
 Student 2: What is your name?
 
-
+Mandy Kao
 
 ------------------------------------------------------------------------
 Student 1: What authorized sources of information did you use to
@@ -17,7 +17,11 @@ information given in the "Policies" web page (also available on armlab
 in the file ~cos217/AuthorizedSourcesList ) to this section of the
 readme file, and edit it as appropriate.
 
-
+COS217 lecture materials. 
+COS217 precept materials.
+COS217 website. 
+COS217 textbooks. 
+COS217 staff and/or current students on Ed. 
 
 ------------------------------------------------------------------------
 Student 2: What authorized sources of information did you use to
@@ -26,7 +30,12 @@ information given in the "Policies" web page (also available on armlab
 in the file ~cos217/AuthorizedSourcesList ) to this section of the
 readme file, and edit it as appropriate.
 
-
+COS217 lecture materials. 
+COS217 precept materials.
+COS217 website. 
+COS217 textbooks. 
+The man pages on the armlab cluster. 
+COS217 staff and/or current students on Ed. 
 
 ------------------------------------------------------------------------
 Student 1: What unauthorized sources of information did you use to
@@ -54,7 +63,11 @@ nature of the interaction, may additionally require the interaction
 being reported to the Committee on Discipline. Write "None" if you used
 no unauthorized sources of information.
 
-
+I used generative AI to create the simple test client used in Step 3.4 
+of the assignment. I asked ChatGPT to "make a test client using the
+following code: " then proceeded to paste the code for nodeFT.c and 
+nodeFT.h. Our code passed all the tests provided by the test client,
+so we didn't end up debugging anything based on the test client.
 
 ------------------------------------------------------------------------
 Student 1: In fulfillment of the requirement from section 2.4.3 of the
@@ -64,7 +77,7 @@ guide, enter your name in the space below the following affirmation:
 This paper represents my own work in accordance with University
 regulations.
 
-
+Sunmin Eom
 
 ------------------------------------------------------------------------
 Student 2: In fulfillment of the requirement from section 2.4.3 of the
@@ -74,7 +87,7 @@ guide, enter your name in the space below the following affirmation:
 This paper represents my own work in accordance with University
 regulations.
 
-
+Mandy Kao
 
 ------------------------------------------------------------------------
 In fulfillment of the requirement from section 2.4.6 of the Academic
@@ -82,19 +95,23 @@ Regulations in Princeton's Rights, Rules, Responsibilities guide,
 and the COS 217 Generative AI policy, disclose and describe how you
 used AI in completing this assignment:
 
-
+I used generative AI to create the simple test client used in Step 3.4 
+of the assignment. I asked ChatGPT to "make a test client using the
+following code: " then proceeded to paste the code for nodeFT.c and 
+nodeFT.h. Our code passed all the tests provided by the test client,
+so we didn't end up debugging anything based on the test client.
 
 ------------------------------------------------------------------------
 Student 1: What is your assessment of the assignment? Was it helpful?
 Was it fun?
 
-
+It was helpful but quite long and confusing.
 
 ------------------------------------------------------------------------
 Student 2: What is your assessment of the assignment? Was it helpful?
 Was it fun?
 
-
+The assignment was helpful, but not very fun. 
 
 ------------------------------------------------------------------------
 (optional) What information can you provide about your submission that
@@ -109,7 +126,7 @@ your disagreements with them? Copy the splint warnings here, and
 express your disagreement after each warning. If there are no
 warnings, then write "None."
 
-
+None. 
 
 ------------------------------------------------------------------------
 What warnings does critTer generate on checkerDT.c, and what are your
@@ -117,7 +134,7 @@ disagreements with them? Copy the critTer warnings here, and express
 your disagreement after each warning. If there are no warnings, then
 write "None."
 
-
+None. 
 
 ------------------------------------------------------------------------
 What warnings does splint generate on your Part 3 code, and what are
@@ -125,7 +142,7 @@ your disagreements with them? Copy the splint warnings here, and
 express your disagreement after each warning. If there are no
 warnings, then write "None."
 
-
+None
 
 ------------------------------------------------------------------------
 What warnings does critTer generate on your Part 3 code, and what are
@@ -133,7 +150,29 @@ your disagreements with them? Copy the critTer warnings here, and
 express your disagreement after each warning. If there are no
 warnings, then write "None."
 
+1. nodeFT.c: line 68: medium priority: 
+      Do you want to validate 'pvContents' through an assert? 
+Disagreement: We intentionally do not assert that pvContents is  
+non-NULL because the File Tree supports empty files, which are 
+represented by a NULL contents pointer and a length of zero. Node_new
+stores the pointer without dereferencing it, so NULL is valid for an 
+empty file. 
 
+2. nodeFT.c: line 308: medium priority:
+      Do you want to validate 'pvNewContents' through an assert? 
+Disagreement: We intentionally do not assert that pvNewContents is
+non-NULL because replacing a file's contents with an empty file 
+should be allowed. Node_replaceFileContents stores the pointer and
+length without dereferencing the pointer, so NULL is valid when the 
+new length is zero. 
+
+3. ft.c: line 294: medium priority
+      Do you want to validate 'pvContents' through an assert? 
+Disagreement: We intentionally do not assert that pvContents is
+non-NULL because FT_insertFile should allow clients to create empty
+files. An empty file is represented by a NULL contents pointer and 
+a length of zero. Adding this assertion would incorrectly prevent 
+the insertion of empty files. 
 
 ------------------------------------------------------------------------
 For each of the five faulty BDT implementations required by Step
@@ -160,6 +199,22 @@ the error manifests itself or is "noticed" by the client.
 What are your critiques of the given DT implementations, as
 specified in Step 2.5?
 
+Encapsulation: Node_getPath() exposes a pointer to an internal Path_T 
+object. Its interface should clarify that this is a borrowed reference
+that the client must not free or modify. Alternatively, the function 
+could return a copy to better protect the Node module's internal data.
 
+Error Handling: Node_new() should validate poNResult before
+dereferencing it. Additionally, Node_free() should not silently 
+continue if it can't find the node in its parent's child array, since
+this could leave an invalid reference in the tree. 
 
-------------------------------------------------------------------------
+Resource Management: DT_toString() does not check whether DynArray_new()
+succeeds before using the returned array. It should check for allocation
+failure and return appropriately to avoid usign a NULL pointer. 
+
+Consistency: Node functions use different conventions for returning
+results. For example, some return pointers directly, while others use
+output parameters and status codes. These conventions can be appropriate
+in different situations, but the interface should clearly document
+how errors and returned resources are handled.

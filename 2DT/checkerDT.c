@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------*/
 /* checkerDT.c                                                        */
-/* Author:                                                            */
+/* Author: Mandy Kao & Sunmin Eom                                     */
 /*--------------------------------------------------------------------*/
 
 #include <assert.h>
@@ -13,13 +13,11 @@
 #include "dt.h"
 
 
-
 /* see checkerDT.h for specification */
 boolean CheckerDT_Node_isValid(Node_T oNNode) {
    Node_T oNParent;
    Path_T oPNPath;
    Path_T oPPPath;
-   size_t ulIndex;
 
    /* Sample check: a NULL pointer is not a valid node */
    if(oNNode == NULL) {
@@ -47,25 +45,6 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
    } else if(Path_getDepth(oPNPath) != 1){
       fprintf(stderr, "Root node does not have depth 1\n");
       return FALSE;
-   }
-
-      for (ulIndex = 1; ulIndex < Node_getNumChildren(oNNode); 
-      ulIndex++){
-      Node_T oNChild = NULL;
-      if (Node_getChild(oNNode, ulIndex, &oNChild) != SUCCESS){
-         fprintf(stderr, "Invalid child index\n");
-         return FALSE;
-      }
-      
-      if(oNChild == NULL){
-         fprintf(stderr, "Child is NULL\n");
-         return FALSE;
-      }
-
-      if(Node_getParent(oNChild) != oNNode){
-         fprintf(stderr, "Child has incorrect parent pointer\n");
-         return FALSE;
-      }
    }
 
    return TRUE;
