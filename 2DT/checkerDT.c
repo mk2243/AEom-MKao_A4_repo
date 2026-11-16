@@ -39,8 +39,8 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
    if(oNParent != NULL) {
       oPPPath = Node_getPath(oNParent);
 
-      if(oPPPath == NULL || Path_getSharedPrefixDepth(oPNPath, oPPPath) != 
-      Path_getDepth(oPNPath)-1){
+      if(oPPPath == NULL || Path_getSharedPrefixDepth(oPNPath, oPPPath) 
+      != Path_getDepth(oPNPath)-1){
          fprintf(stderr, "Invalid parent-child path relationship\n");
          return FALSE;
       }
@@ -49,7 +49,8 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
       return FALSE;
    }
 
-      for (ulIndex = 1; ulIndex < Node_getNumChildren(oNNode); ulIndex++){
+      for (ulIndex = 1; ulIndex < Node_getNumChildren(oNNode); 
+      ulIndex++){
       Node_T oNChild = NULL;
       if (Node_getChild(oNNode, ulIndex, &oNChild) != SUCCESS){
          fprintf(stderr, "Invalid child index\n");
@@ -81,7 +82,7 @@ boolean CheckerDT_Node_isValid(Node_T oNNode) {
 */
 static boolean CheckerDT_treeCheck(Node_T oNNode) {
    size_t ulIndex;
-   Node_T oNPrevChild;
+   Node_T oNPrevChild = NULL;
 
    if(oNNode!= NULL) {
       Node_T *children;
@@ -109,6 +110,7 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
          if(iStatus != SUCCESS) {
             fprintf(stderr, "getNumChildren claims more children than " 
                "getChild returns\n");
+            free(children);
             return FALSE;
          }
 
@@ -117,10 +119,10 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
          if (ulIndex > 0) {
             char *pcCurrString = Node_toString(oNChild);
             char *pcPrevString = Node_toString(oNPrevChild);
-            /* (void) Node_getChild(oNNode, ulIndex-1, &oNPrevChild); */
             if (strcmp(pcPrevString, pcCurrString) > 0) {
                fprintf(stderr, "Children of a node in DT is are "
                   "not stored in lexicographic order\n");
+               free(children);
                return FALSE;
             }
             free(pcPrevString);
@@ -141,8 +143,10 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
 
          /* if recurring down one subtree results in a failed check
             farther down, passes the failure back up immediately */
-         if(!CheckerDT_treeCheck(oNChild))
+         if(!CheckerDT_treeCheck(oNChild)) {
+            free(children);
             return FALSE;
+         }
 
          oNPrevChild = oNChild;
       }
