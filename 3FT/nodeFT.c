@@ -32,7 +32,8 @@ struct node {
 /*
   Links new child oNChild into oNParent's children array at index
   ulIndex. Returns SUCCESS if the new child was added successfully,
-  or  MEMORY_ERROR if allocation fails adding oNChild to the array.
+  MEMORY_ERROR if allocation fails adding oNChild to the array, or 
+  NOT_A_DIRECTORY if oNParent represents a file. 
 */
 static int Node_addChild(Node_T oNParent, Node_T oNChild,
                          size_t ulIndex) {
@@ -63,25 +64,6 @@ static int Node_compareString(const Node_T oNFirst,
    return Path_compareString(oNFirst->oPPath, pcSecond);
 }
 
-
-/*
-  Creates a new node in the File Tree, with path oPPath and
-  parent oNParent. bIsFile indicateds whether the new node represents 
-  a file or a directory. pvContents and ulLenght specify the file's 
-  contents and length, but they are ignored for directories. 
-  
-  Returns an int SUCCESS status and sets *poNResult to be the 
-  new node if successful. Otherwise, sets *poNResult to NULL
-  and returns status:
-  * MEMORY_ERROR if memory could not be allocated to complete request
-  * CONFLICTING_PATH if oNParent's path is not an ancestor of oPPath or
-                     oNParent is NULL and bIsFile is TRUE
-  * NO_SUCH_PATH if oPPath is of depth 0
-                 or oNParent's path is not oPPath's direct parent
-                 or oNParent is NULL but oPPath is not of depth 1
-  * ALREADY_IN_TREE if oNParent already has a child with this path
-  * NOT_A_DIRECTORY if oNParent is a file
-*/
 int Node_new(Path_T oPPath, Node_T oNParent, boolean bIsFile,
     void *pvContents, size_t ulLength, Node_T *poNResult) {
    struct node *psNew;

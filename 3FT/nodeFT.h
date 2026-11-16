@@ -24,7 +24,8 @@ typedef struct node *Node_T;
   new node if successful. Otherwise, sets *poNResult to NULL
   and returns status:
   * MEMORY_ERROR if memory could not be allocated to complete request
-  * CONFLICTING_PATH if oNParent's path is not an ancestor of oPPath
+  * CONFLICTING_PATH if oNParent's path is not an ancestor of oPPath or
+                     oNParent is NULL and bIsFile is TRUE
   * NO_SUCH_PATH if oPPath is of depth 0
                  or oNParent's path is not oPPath's direct parent
                  or oNParent is NULL but oPPath is not of depth 1
@@ -64,6 +65,7 @@ size_t Node_getNumChildren(Node_T oNParent);
   node of oNParent with identifier ulChildID, if one exists.
   Otherwise, sets *poNResult to NULL and returns status:
   * NO_SUCH_PATH if ulChildID is not a valid child for oNParent
+  * NOT_A_DIRECTORY if oNParent represents a file 
 */
 int Node_getChild(Node_T oNParent, size_t ulChildID,
                   Node_T *poNResult);
