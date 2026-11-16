@@ -85,14 +85,14 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
    Node_T oNPrevChild = NULL;
 
    if(oNNode!= NULL) {
-      Node_T *children;
+      DynArray_T children;
 
       /* Sample check on each node: node must be valid */
       /* If not, pass that failure back up immediately */
       if(!CheckerDT_Node_isValid(oNNode))
          return FALSE;
 
-      children = calloc(Node_getNumChildren(oNNode), sizeof(*children));
+      children = DynArray_new(Node_getNumChildren(oNNode));
       if (children == NULL) {
          fprintf(stderr, "Memory allocation within DT validity checker"
             "failed \n");
@@ -110,7 +110,7 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
          if(iStatus != SUCCESS) {
             fprintf(stderr, "getNumChildren claims more children than " 
                "getChild returns\n");
-            free(children);
+            DynArray_free(children);
             return FALSE;
          }
 
@@ -122,7 +122,9 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
             if (strcmp(pcPrevString, pcCurrString) > 0) {
                fprintf(stderr, "Children of a node in DT is are "
                   "not stored in lexicographic order\n");
-               free(children);
+               free(pcPrevString);
+               free(pcCurrString);
+               DynArray_free(children);
                return FALSE;
             }
             free(pcPrevString);
@@ -132,24 +134,30 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
          /* Check if oNChild has the same path as any of the previously
          visited children of oNNode */
          for(i = 0; i < ulIndex; i++) {
-            if (Node_compare(children[i], oNChild) == 0) {
+            if (Node_compare(DynArray_get(children, i), oNChild) == 0) {
                fprintf(stderr, "Two nodes of the same path exist in DT"
                    "\n");
-               free(children);
+               DynArray_free(children);
                return FALSE;
             }
          }
-         children[ulIndex] = oNChild;
+         if (DynArray_addAt(children, ulIndex, oNChild) == 0) {
+            fprintf(stderr, "Memory allocation within DT validity" 
+               "checker failed \n");
+            DynArray_free(children);
+            return FALSE;
+         }
 
          /* if recurring down one subtree results in a failed check
             farther down, passes the failure back up immediately */
          if(!CheckerDT_treeCheck(oNChild)) {
-            free(children);
+            DynArray_free(children);
             return FALSE;
          }
 
          oNPrevChild = oNChild;
       }
+      DynArray_free(children);
    }
    return TRUE;
 }
