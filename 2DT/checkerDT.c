@@ -150,10 +150,11 @@ static boolean CheckerDT_treeCheck(Node_T oNNode) {
    return TRUE;
 }
 
-/* Recursively sums the number of nodes for each child of the given node
-oNNode and adds 1 to the result, returning the number of nodes (size_t)
-in DT rooted at oNNode */
-static size_t CheckerDTNumNodes(Node_T oNNode) {
+/* Recursively sums the number of nodes of DT rooted at each child of 
+the given node oNNode and adds 1 to the result, returning the 
+number of nodes (size_t) in DT rooted at oNNode. Returns 0 if oNNode 
+is NULL. */
+static size_t CheckerDT_numNodes(Node_T oNNode) {
    size_t ulIndex;
    size_t numNodes = 0;
    if (oNNode == NULL) {
@@ -164,7 +165,7 @@ static size_t CheckerDTNumNodes(Node_T oNNode) {
          Node_T oNChild = NULL;
          Node_getChild(oNNode, ulIndex, &oNChild);
          if (oNChild != NULL)
-            numNodes += CheckerDTNumNodes(oNChild);
+            numNodes += CheckerDT_numNodes(oNChild);
       }
    return numNodes + 1;
 } 
@@ -181,7 +182,7 @@ boolean CheckerDT_isValid(boolean bIsInitialized, Node_T oNRoot,
          return FALSE;
       }
    /* Check whether ulCount (count of nodes) provided is correct */
-   if (CheckerDTNumNodes(oNRoot) != ulCount) {
+   if (CheckerDT_numNodes(oNRoot) != ulCount) {
          fprintf(stderr, "Count is incorrect\n");
          return FALSE;
       } 
