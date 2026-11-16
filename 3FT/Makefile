@@ -1,4 +1,11 @@
-GCC = gcc217m
+#--------------------------------------------------------------------
+# Makefile for Assignment 4, Part 3
+# dt* targets are built using checkerDT
+# Author: Mandy Kao & Sunmin Eom
+#--------------------------------------------------------------------
+
+GCC = gcc217
+#GCC = gcc217m
 
 all: ft
 

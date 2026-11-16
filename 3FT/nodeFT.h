@@ -17,7 +17,7 @@ typedef struct node *Node_T;
 /*
   Creates a new node in the File Tree, with path oPPath and
   parent oNParent. bIsFile indicateds whether the new node represents 
-  a file or a directory. pvContents and ulLenght specify the file's 
+  a file or a directory. pvContents and ulLength specify the file's 
   contents and length, but they are ignored for directories. 
   
   Returns an int SUCCESS status and sets *poNResult to be the 
@@ -110,11 +110,12 @@ void *Node_getFileContents(Node_T oNNode);
 size_t Node_getFileLength(Node_T oNNode);
 
 /*
-  Replaces the contents and length of oNNode with the supplied values. 
-  Returns the previous contents pointer. Requires onNode to represent
-  a file. Does not free the previous contents. 
+  Replaces the contents and length of oNNode with pvNewContents, 
+  ulNewLength, respectively.
+  Returns the previous contents pointer. Requires oNNode to represent
+  a file. Does not free the previous contents.
 */
-void *Node_replaceFileContents(Node_T onNode, void *pvNewContents,
+void *Node_replaceFileContents(Node_T oNNode, void *pvNewContents,
                                size_t ulNewLength);
 
 

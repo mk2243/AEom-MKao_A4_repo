@@ -70,7 +70,7 @@ int Node_new(Path_T oPPath, Node_T oNParent, boolean bIsFile,
    Path_T oPParentPath = NULL;
    Path_T oPNewPath = NULL;
    size_t ulParentDepth;
-   size_t ulIndex;
+   size_t ulIndex = 0;
    int iStatus;
 
    assert(oPPath != NULL);
@@ -161,6 +161,7 @@ int Node_new(Path_T oPPath, Node_T oNParent, boolean bIsFile,
    if(oNParent != NULL) {
       iStatus = Node_addChild(oNParent, psNew, ulIndex);
       if(iStatus != SUCCESS) {
+         DynArray_free(psNew->oDChildren);
          Path_free(psNew->oPPath);
          free(psNew);
          *poNResult = NULL;
@@ -174,7 +175,7 @@ int Node_new(Path_T oPPath, Node_T oNParent, boolean bIsFile,
 }
 
 size_t Node_free(Node_T oNNode) {
-   size_t ulIndex;
+   size_t ulIndex = 0;
    size_t ulCount = 0;
 
    assert(oNNode != NULL);

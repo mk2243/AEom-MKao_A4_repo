@@ -55,7 +55,7 @@ static int FT_traversePath(Path_T oPPath, Node_T *poNFurthest) {
    Node_T oNChild = NULL;
    size_t ulDepth;
    size_t i;
-   size_t ulChildID;
+   size_t ulChildID = 0;
 
    assert(oPPath != NULL);
    assert(poNFurthest != NULL);
@@ -199,11 +199,6 @@ int FT_insertDir(const char *pcPath) {
       return CONFLICTING_PATH;
    }
 
-   if(Node_isFile(oNCurr)) {
-      Path_free(oPPath);
-      return NOT_A_DIRECTORY;
-   }
-
    ulDepth = Path_getDepth(oPPath);
    if(oNCurr == NULL) /* new root! */
       ulIndex = 1;
@@ -329,11 +324,6 @@ int FT_insertFile(const char *pcPath, void *pvContents,
       return CONFLICTING_PATH;
    }
 
-   if(Node_isFile(oNCurr)) {
-      Path_free(oPPath);
-      return NOT_A_DIRECTORY;
-   }
-
    ulDepth = Path_getDepth(oPPath);
    if(oNCurr == NULL) /* new root! */
       ulIndex = 1;
@@ -363,8 +353,13 @@ int FT_insertFile(const char *pcPath, void *pvContents,
       }
 
       /* insert the new node for this level */
-      iStatus = Node_new(oPPrefix, oNCurr, TRUE, pvContents, 
-         ulLength, &oNNewNode);
+      if (ulIndex == ulDepth) {
+         iStatus = Node_new(oPPrefix, oNCurr, TRUE, pvContents, 
+            ulLength, &oNNewNode);
+      } else {
+         iStatus = Node_new(oPPrefix, oNCurr, FALSE, NULL, 
+            0, &oNNewNode);
+      }
       if(iStatus != SUCCESS) {
          Path_free(oPPath);
          Path_free(oPPrefix);
