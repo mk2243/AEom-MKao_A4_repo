@@ -1,6 +1,6 @@
 /*--------------------------------------------------------------------*/
-/* nodeDT.c                                                           */
-/* Author: Christopher Moretti                                        */
+/* nodeFT.c                                                           */
+/* Author: Mandy Kao & Sunmin Eom                                     */
 /*--------------------------------------------------------------------*/
 
 #include <stdlib.h>
@@ -75,7 +75,6 @@ int Node_new(Path_T oPPath, Node_T oNParent, boolean bIsFile,
 
    assert(oPPath != NULL);
    assert(poNResult != NULL);
-   assert(oNParent == NULL);
 
    *poNResult = NULL;
 
@@ -170,8 +169,6 @@ int Node_new(Path_T oPPath, Node_T oNParent, boolean bIsFile,
    }
 
    *poNResult = psNew;
-
-   assert(oNParent == NULL);
 
    return SUCCESS;
 }
